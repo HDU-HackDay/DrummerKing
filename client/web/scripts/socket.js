@@ -35,12 +35,6 @@ var websocket = function(url){
 };
 
 
-// usage
-var Server = new websocket('ws://192.168.1.112:9300');
 
-Server.connect();
-Server.bind('message', function( payload ) {
-    console.log(payload);
-});
 
 

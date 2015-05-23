@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>打地鼠</title>
-	<link rel="stylesheet" href="style/css/Mouse.css">
+	<link rel="stylesheet" href="style/less/Mouse.css">
 </head>
 <body>
 	<audio src="music/hit.mov" id="hitMusic"></audio>
@@ -40,11 +40,14 @@
 			var missMusic = document.getElementById("missMusic");
 			var showMusic = document.getElementById("showMusic");
 
-			setInterval(showMouse,1000);
+			setInterval(showMouse,Math.random()*3000);
+			// 连接socket通信
+			var Server = new websocket('ws://192.168.1.112:9300');
 
-			document.onkeydown = function(ev){		//键盘按键					
-				var oEvent = window.event || ev;
-
+			Server.connect();
+			Server.bind('message', function( payload ) {
+			    var payload = JSON.parse(payload);
+			
 				oHammer.css({
 					"display": "none",
 					"transform": "rotate(30deg)",
@@ -55,7 +58,7 @@
 				});
 
 
-				if(ev.keyCode == 81){	//Q
+				if(payload.data == 0){	//Q
 					oHammer.eq(0).show(100,function(){						
 						oHammer.eq(0).css({"-webkit-transform": "rotate(-20deg)"});
 						setTimeout(function(){
@@ -67,20 +70,20 @@
 							if(mouseList[0]==1){	//如果打中了
 								console.log("bingo");
 								hitMusic.play();
-								oMouse.eq(k).css({
+								oMouse.eq(k).animate({
 									"left":"100px",
 									"top":"100px",
 									"width":"0"
+								},"fast",function(){
+									mouseList[0]=0;
 								})
-								mouseList[0]==0;
-								setTimeout(showMouse,2000);
 							}else{	//如果没打中
 								missMusic.play();
 							}		
 						}
 					})	
 				}
-				if(ev.keyCode == 87){	//W
+				if(payload.data == 1){	//W
 					oHammer.eq(1).show(100,function(){
 						oHammer.eq(1).css({"-webkit-transform": "rotate(-20deg)"});
 						setTimeout(function(){
@@ -92,20 +95,20 @@
 							if(mouseList[1]==1){
 								console.log("bingo");
 								hitMusic.play();
-								oMouse.eq(k).css({
+								oMouse.eq(k).animate({
 									"left":"100px",
 									"top":"100px",
 									"width":"0"
+								},"fast",function(){
+									mouseList[1]=0;
 								})
-								mouseList[1]==0;
-								setTimeout(showMouse,2000);
 							}else{
 								missMusic.play();
 							}
 						}
 					})	
 				}
-				if(ev.keyCode == 69){	//E
+				if(payload.data == 2){	//E
 					oHammer.eq(2).show(100,function(){		
 						oHammer.eq(2).css({"-webkit-transform": "rotate(-20deg)"});
 						setTimeout(function(){
@@ -117,20 +120,20 @@
 							if(mouseList[2]==1){
 								console.log("bingo");
 								hitMusic.play();
-								oMouse.eq(k).css({
+								oMouse.eq(k).animate({
 									"left":"100px",
 									"top":"100px",
 									"width":"0"
+								},"fast",function(){
+									mouseList[2]=0;
 								})
-								mouseList[2]==0;
-								setTimeout(showMouse,2000);
 							}else{
 								missMusic.play();
 							}
 						}
 					})	
 				}
-			}
+			});	
 
 			function showMouse(){	//生成地鼠
 				
