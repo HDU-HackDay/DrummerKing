@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>打地鼠</title>
+	<link rel="stylesheet" href="style/css/Mouse.css">
+</head>
+<body>
+	<div class="main">
+		<div class="contain">
+			<div class="wrap hole1">
+				<img src="image/hole.png" class="hole" alt="">
+				<img src="image/mouse.png" class="mouse" alt="">
+				<img src="image/hammer.png" class="hammer" alt="">
+			</div>
+			<div class="wrap hole2">
+				<img src="image/hole.png" class="hole" alt="">
+				<img src="image/mouse.png" class="mouse" alt="">
+				<img src="image/hammer.png" class="hammer" alt="">
+			</div>
+			<div class="wrap hole3">
+				<img src="image/hole.png" class="hole" alt="">
+				<img src="image/mouse.png" class="mouse" alt="">
+				<img src="image/hammer.png" class="hammer" alt="">
+			</div>
+		</div>
+	</div>
+	<script src="scripts/libs/jquery-2.1.1.min.js"></script>
+	<script>
+		$(function(){
+			var oMouse = $(".mouse");
+			var oHammer = $(".hammer");
+			var _index = null;
+			
+			setTimeout(showMouse,1000);
+
+			document.onkeydown = function(ev){						
+				var oEvent = window.event || ev;
+
+				oHammer.css({
+					"display": "none",
+					"transform": "rotate(30deg)",
+					"-ms-transform": "rotate(30deg)",		/* IE 9 */
+					"-webkit-transform": "rotate(30deg)",	/* Safari and Chrome */
+					"-o-transform": "rotate(30deg)",	/* Opera */
+					"-moz-transform": "rotate(30deg)"		/* Firefox */
+				});
+
+
+				if(ev.keyCode == 81){	//Q
+					oHammer.eq(0).show(100,function(){						
+						oHammer.eq(0).css({"-webkit-transform": "rotate(-20deg)"});
+						setTimeout(function(){
+							oHammer.eq(0).css("display", "none");
+						}, 500)
+					});	
+					oHammer.each(function(k,o){
+						if(k == 0 && k == _index){
+							console.log("bingo");
+							oMouse.eq(k).css({
+								"left":"100px",
+								"top":"100px",
+								"width":"0"
+							})
+							setTimeout(showMouse,1000);
+						}
+					})	
+				}
+				if(ev.keyCode == 87){	//W
+					oHammer.eq(1).show(100,function(){
+						oHammer.eq(1).css({"-webkit-transform": "rotate(-20deg)"});
+						setTimeout(function(){
+							oHammer.eq(1).css("display", "none");
+						}, 500)
+					});
+					oHammer.each(function(k,o){
+						if(k == 1 && k == _index){
+							console.log("bingo");
+							oMouse.eq(k).css({
+								"left":"100px",
+								"top":"100px",
+								"width":"0"
+							})
+							setTimeout(showMouse,1000);
+						}
+					})	
+				}
+				if(ev.keyCode == 69){	//E
+					oHammer.eq(2).show(100,function(){		
+						oHammer.eq(2).css({"-webkit-transform": "rotate(-20deg)"});
+						setTimeout(function(){
+							oHammer.eq(2).css("display", "none");
+						}, 500)
+					});
+					oHammer.each(function(k,o){
+						if(k == 2 && k == _index){
+							console.log("bingo");
+							oMouse.eq(k).css({
+								"left":"100px",
+								"top":"100px",
+								"width":"0"
+							})
+							setTimeout(showMouse,1000);
+						}
+					})	
+				}
+			}
+
+			function showMouse(){
+				oMouse.css({
+					"width": "200px",
+					"left": "0px",
+					"top": "-80px",
+					"display": "none"
+				});
+				_index = Math.round(Math.random()*2);
+
+				oMouse.eq(_index).css("display", "block");
+
+			}
+
+			
+		})
+	</script>
+</body>
+</html>

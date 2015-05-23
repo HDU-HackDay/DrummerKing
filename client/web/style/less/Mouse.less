@@ -1,0 +1,66 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+body{
+	background: #a4db48;
+}
+
+.main{
+	.contain{
+		position: relative;
+		width: 900px;
+		margin: 0 auto;
+
+		.wrap{
+			position: absolute;
+			img{
+				position: absolute;
+				display: block;
+			}
+			img.hole{
+				display: block;
+			}
+			img.mouse{
+				width: 200px;
+				left: 0px;
+				top: -80px;
+				display: none;
+
+				transition: all .5s;
+				-moz-transition: all .5s;	/* Firefox 4 */
+				-webkit-transition: all .5s;	/* Safari 和 Chrome */
+				-o-transition: all .5s;	/* Opera */
+			}
+			img.hammer{
+				left: 150px;
+				top: -150px;
+				display: none;
+
+				transition: all .5s;
+				-moz-transition: all .5s;	/* Firefox 4 */
+				-webkit-transition: all .5s;	/* Safari 和 Chrome */
+				-o-transition: all .5s;	/* Opera */
+
+				transform: rotate(30deg);
+				-ms-transform: rotate(30deg);		/* IE 9 */
+				-webkit-transform: rotate(30deg);	/* Safari and Chrome */
+				-o-transform: rotate(30deg);		/* Opera */
+				-moz-transform: rotate(30deg);		/* Firefox */
+			}
+
+		}
+		.hole1{
+			left: 320px;
+			top: 150px;
+		}
+		.hole2{
+			left: 120px;
+			top: 420px;
+		}
+		.hole3{
+			left: 540px;
+			top: 420px;
+		}
+	}
+}
