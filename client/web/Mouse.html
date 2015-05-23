@@ -9,9 +9,15 @@
 	<audio src="music/hit.mov" id="hitMusic"></audio>
 	<audio src="music/miss.mp3" id="missMusic"></audio>
 	<audio src="music/show.mp3" id="showMusic"></audio>
+	<audio src="music/bgMusic.mp3" autoplay></audio>
 
 	<div class="main">
 		<div class="contain">
+			<div class="start">
+				<p class="btn">点击开始</p>
+				<p class="score">得分:<b></b></p>
+				<p class="time">时间:<b></b>s</p>
+			</div>
 			<div class="wrap hole1">
 				<img src="image/hole.png" class="hole" alt="">
 				<img src="image/mouse.png" class="mouse" alt="">
@@ -33,126 +39,177 @@
 	<script src="scripts/socket.js"></script>
 	<script>
 		$(function(){
-			var oMouse = $(".mouse");
-			var oHammer = $(".hammer");
-			var mouseList = [0,0,0];
-			var hitMusic = document.getElementById("hitMusic");
-			var missMusic = document.getElementById("missMusic");
-			var showMusic = document.getElementById("showMusic");
+			var oMouse = $(".mouse");	//获取地鼠对象
+			var oHammer = $(".hammer");		//获取锤子对象
+			var oStartBtn = $(".start .btn")	//获取开始按钮
+			var oScore = $(".start .score b")		//获取分数对象
+			var oTime = $(".start .time b")		//获取时间对象
+			var iTime = null;	//倒计时时间
+			var iScore = null;	//分数
 
-			setInterval(showMouse,Math.random()*3000);
-			// 连接socket通信
-			var Server = new websocket('ws://192.168.1.112:9300');
+			var mouseList = [0,0,0];	//保存每个洞是否生成地鼠的状态，0表示否，1表示是
+			var hitMusic = document.getElementById("hitMusic");		//打地鼠声效
+			var missMusic = document.getElementById("missMusic");	//打错了声效
+			var showMusic = document.getElementById("showMusic");	//地鼠出现声效
+			var timer1 = null;	//倒计时计时器
+			var timer2 = null;	//生成地鼠定时器
 
-			Server.connect();
-			Server.bind('message', function( payload ) {
-			    var payload = JSON.parse(payload);
-			
-				oHammer.css({
-					"display": "none",
-					"transform": "rotate(30deg)",
-					"-ms-transform": "rotate(30deg)",		/* IE 9 */
-					"-webkit-transform": "rotate(30deg)",	/* Safari and Chrome */
-					"-o-transform": "rotate(30deg)",	/* Opera */
-					"-moz-transform": "rotate(30deg)"		/* Firefox */
-				});
-
-
-				if(payload.data == 0){	//Q
-					oHammer.eq(0).show(100,function(){						
-						oHammer.eq(0).css({"-webkit-transform": "rotate(-20deg)"});
-						setTimeout(function(){
-							oHammer.eq(0).css("display", "none");
-						}, 500)
-					});	
-					oHammer.each(function(k,o){
-						if(k == 0){	//如果是当前锤子的键值
-							if(mouseList[0]==1){	//如果打中了
-								console.log("bingo");
-								hitMusic.play();
-								oMouse.eq(k).animate({
-									"left":"100px",
-									"top":"100px",
-									"width":"0"
-								},"fast",function(){
-									mouseList[0]=0;
-								})
-							}else{	//如果没打中
-								missMusic.play();
-							}		
-						}
-					})	
-				}
-				if(payload.data == 1){	//W
-					oHammer.eq(1).show(100,function(){
-						oHammer.eq(1).css({"-webkit-transform": "rotate(-20deg)"});
-						setTimeout(function(){
-							oHammer.eq(1).css("display", "none");
-						}, 500)
-					});
-					oHammer.each(function(k,o){
-						if(k == 1){
-							if(mouseList[1]==1){
-								console.log("bingo");
-								hitMusic.play();
-								oMouse.eq(k).animate({
-									"left":"100px",
-									"top":"100px",
-									"width":"0"
-								},"fast",function(){
-									mouseList[1]=0;
-								})
-							}else{
-								missMusic.play();
-							}
-						}
-					})	
-				}
-				if(payload.data == 2){	//E
-					oHammer.eq(2).show(100,function(){		
-						oHammer.eq(2).css({"-webkit-transform": "rotate(-20deg)"});
-						setTimeout(function(){
-							oHammer.eq(2).css("display", "none");
-						}, 500)
-					});
-					oHammer.each(function(k,o){
-						if(k == 2){
-							if(mouseList[2]==1){
-								console.log("bingo");
-								hitMusic.play();
-								oMouse.eq(k).animate({
-									"left":"100px",
-									"top":"100px",
-									"width":"0"
-								},"fast",function(){
-									mouseList[2]=0;
-								})
-							}else{
-								missMusic.play();
-							}
-						}
-					})	
-				}
-			});	
-
-			function showMouse(){	//生成地鼠
+			oStartBtn.click(function(){	//游戏开始
 				
-				var _index = Math.round(Math.random()*2);
+				oStartBtn.css("display","none");
+				$(".start .score").css("display","block");
+				$(".start .time").css("display","block");
 
-				if(mouseList[_index]==0){
-					oMouse.eq(_index).css({
-						"width": "200px",
-						"left": "0px",
-						"top": "-80px",
-						"display": "block"
-					});
-					mouseList[_index] = 1;
+				iTime = 30;	//初始化倒计时时间
+				oTime.html(iTime);
+				iScore = 0;	//初始化分数
+				oScore.html(iScore);
+		
+				timer1 = setInterval(function(){
+					if(iTime != 0){
+						iTime--;
+						oTime.html(iTime);	
+					}else{
+						clearInterval(timer1);
+						alert("您的总得分是:"+iScore);
+						location.reload();
+					}
 					
-					showMusic.play();
-				}
-				
+				},1000);
 
+				GameStart();
+			})
+			function GameStart(){
+				timer2 = setInterval(showMouse,Math.random()*3000);	//随机时间生成地鼠
+
+				// 连接socket通信
+				var Server = new websocket('ws://192.168.1.112:9300');
+				Server.connect();
+
+				Server.bind('message', function( payload ) {
+				    var payload = JSON.parse(payload);	//字符串转换JSON格式
+				
+					oHammer.css({	//初始化锤子变量
+						"display": "none",
+						"transform": "rotate(30deg)",
+						"-ms-transform": "rotate(30deg)",		/* IE 9 */
+						"-webkit-transform": "rotate(30deg)",	/* Safari and Chrome */
+						"-o-transform": "rotate(30deg)",	/* Opera */
+						"-moz-transform": "rotate(30deg)"		/* Firefox */
+					});
+
+
+					if(payload.data == 0){	//Q
+						oHammer.eq(0).show(100,function(){	//出现锤子并运动，运动完后消失					
+							oHammer.eq(0).css({"-webkit-transform": "rotate(-20deg)"});
+							setTimeout(function(){
+								oHammer.eq(0).css("display", "none");
+							}, 500)
+						});	
+						oHammer.each(function(k,o){		//遍历锤子
+							if(k == 0){	//如果是当前锤子的键值
+								if(mouseList[0]==1){	//如果如果当前地洞确实有地鼠
+									
+									hitMusic.play();	//播放打中声效
+
+									iScore++;	//增加分数
+									oScore.html(iScore);
+
+									oMouse.eq(k).animate({	//地鼠被打中时的效果
+										"left":"100px",
+										"top":"100px",
+										"width":"0"
+									},"fast",function(){
+										mouseList[0]=0;		//被打中后，修改当前洞的状态
+									})
+								}else{	//如果没有
+									missMusic.play();	//播放打错了的声效
+								}		
+							}
+						})	
+					}
+					if(payload.data == 1){	//W
+						oHammer.eq(1).show(100,function(){
+							oHammer.eq(1).css({"-webkit-transform": "rotate(-20deg)"});
+							setTimeout(function(){
+								oHammer.eq(1).css("display", "none");
+							}, 500)
+						});
+						oHammer.each(function(k,o){
+							if(k == 1){
+								if(mouseList[1]==1){
+
+									hitMusic.play();
+
+									iScore++;	//增加分数
+									oScore.html(iScore);
+
+									oMouse.eq(k).animate({
+										"left":"100px",
+										"top":"100px",
+										"width":"0"
+									},"fast",function(){
+										mouseList[1]=0;
+									})
+								}else{
+									missMusic.play();
+								}
+							}
+						})	
+					}
+					if(payload.data == 2){	//E
+						oHammer.eq(2).show(100,function(){		
+							oHammer.eq(2).css({"-webkit-transform": "rotate(-20deg)"});
+							setTimeout(function(){
+								oHammer.eq(2).css("display", "none");
+							}, 500)
+						});
+						oHammer.each(function(k,o){
+							if(k == 2){
+								if(mouseList[2]==1){
+									
+									hitMusic.play();
+
+									iScore++;	//增加分数
+									oScore.html(iScore);
+
+									oMouse.eq(k).animate({
+										"left":"100px",
+										"top":"100px",
+										"width":"0"
+									},"fast",function(){
+										mouseList[2]=0;
+									})
+								}else{
+									missMusic.play();
+								}
+							}
+						})	
+					}
+				});	
+
+				function showMouse(){	//生成地鼠
+					
+					var _index = Math.round(Math.random()*2);	//随机一个0-2的整数
+
+					if(mouseList[_index] == 0){	//如果随机数对应地洞没有地鼠，则初始化该地洞的地鼠变量
+						oMouse.eq(_index).css({
+							"width": "200px",
+							"left": "0px",
+							"top": "-80px",
+							"display": "block"
+						});
+						mouseList[_index] = 1;	//修改当前地洞状态
+						
+						showMusic.play();	//播放地鼠出现的声效
+					}
+					
+
+				}
 			}
+			
+
+			
 
 			
 		})
