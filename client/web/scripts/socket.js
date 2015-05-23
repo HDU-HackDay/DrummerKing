@@ -1,4 +1,4 @@
-var WebSocket = function(url){
+var websocket = function(url){
 	var callbacks = {};
 	var ws_url = url;
 	var conn;
@@ -34,9 +34,13 @@ var WebSocket = function(url){
 	}
 };
 
-/*
-usage
-var Server = new WebSocket('ws://10.20.122.234:9300');
-Server.send("message", "1234" );
-*/
+
+// usage
+var Server = new websocket('ws://192.168.1.112:9300');
+
+Server.connect();
+Server.bind('message', function( payload ) {
+    console.log(payload);
+});
+
 

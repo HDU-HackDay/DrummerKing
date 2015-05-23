@@ -6,6 +6,10 @@
 	<link rel="stylesheet" href="style/css/Mouse.css">
 </head>
 <body>
+	<audio src="music/hit.mov" id="hitMusic"></audio>
+	<audio src="music/miss.mp3" id="missMusic"></audio>
+	<audio src="music/show.mp3" id="showMusic"></audio>
+
 	<div class="main">
 		<div class="contain">
 			<div class="wrap hole1">
@@ -26,15 +30,19 @@
 		</div>
 	</div>
 	<script src="scripts/libs/jquery-2.1.1.min.js"></script>
+	<script src="scripts/socket.js"></script>
 	<script>
 		$(function(){
 			var oMouse = $(".mouse");
 			var oHammer = $(".hammer");
-			var _index = null;
-			
-			setTimeout(showMouse,1000);
+			var mouseList = [0,0,0];
+			var hitMusic = document.getElementById("hitMusic");
+			var missMusic = document.getElementById("missMusic");
+			var showMusic = document.getElementById("showMusic");
 
-			document.onkeydown = function(ev){						
+			setInterval(showMouse,1000);
+
+			document.onkeydown = function(ev){		//键盘按键					
 				var oEvent = window.event || ev;
 
 				oHammer.css({
@@ -55,14 +63,20 @@
 						}, 500)
 					});	
 					oHammer.each(function(k,o){
-						if(k == 0 && k == _index){
-							console.log("bingo");
-							oMouse.eq(k).css({
-								"left":"100px",
-								"top":"100px",
-								"width":"0"
-							})
-							setTimeout(showMouse,1000);
+						if(k == 0){	//如果是当前锤子的键值
+							if(mouseList[0]==1){	//如果打中了
+								console.log("bingo");
+								hitMusic.play();
+								oMouse.eq(k).css({
+									"left":"100px",
+									"top":"100px",
+									"width":"0"
+								})
+								mouseList[0]==0;
+								setTimeout(showMouse,2000);
+							}else{	//如果没打中
+								missMusic.play();
+							}		
 						}
 					})	
 				}
@@ -74,14 +88,20 @@
 						}, 500)
 					});
 					oHammer.each(function(k,o){
-						if(k == 1 && k == _index){
-							console.log("bingo");
-							oMouse.eq(k).css({
-								"left":"100px",
-								"top":"100px",
-								"width":"0"
-							})
-							setTimeout(showMouse,1000);
+						if(k == 1){
+							if(mouseList[1]==1){
+								console.log("bingo");
+								hitMusic.play();
+								oMouse.eq(k).css({
+									"left":"100px",
+									"top":"100px",
+									"width":"0"
+								})
+								mouseList[1]==0;
+								setTimeout(showMouse,2000);
+							}else{
+								missMusic.play();
+							}
 						}
 					})	
 				}
@@ -93,29 +113,41 @@
 						}, 500)
 					});
 					oHammer.each(function(k,o){
-						if(k == 2 && k == _index){
-							console.log("bingo");
-							oMouse.eq(k).css({
-								"left":"100px",
-								"top":"100px",
-								"width":"0"
-							})
-							setTimeout(showMouse,1000);
+						if(k == 2){
+							if(mouseList[2]==1){
+								console.log("bingo");
+								hitMusic.play();
+								oMouse.eq(k).css({
+									"left":"100px",
+									"top":"100px",
+									"width":"0"
+								})
+								mouseList[2]==0;
+								setTimeout(showMouse,2000);
+							}else{
+								missMusic.play();
+							}
 						}
 					})	
 				}
 			}
 
-			function showMouse(){
-				oMouse.css({
-					"width": "200px",
-					"left": "0px",
-					"top": "-80px",
-					"display": "none"
-				});
-				_index = Math.round(Math.random()*2);
+			function showMouse(){	//生成地鼠
+				
+				var _index = Math.round(Math.random()*2);
 
-				oMouse.eq(_index).css("display", "block");
+				if(mouseList[_index]==0){
+					oMouse.eq(_index).css({
+						"width": "200px",
+						"left": "0px",
+						"top": "-80px",
+						"display": "block"
+					});
+					mouseList[_index] = 1;
+					
+					showMusic.play();
+				}
+				
 
 			}
 
