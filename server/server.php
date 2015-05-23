@@ -47,6 +47,6 @@ $Server = new PHPWebSocket();
 $Server->bind('message', 'wsOnMessage');
 $Server->bind('open', 'wsOnOpen');
 $Server->bind('close', 'wsOnClose');
-$Server->wsStartServer('10.20.122.234', 9300);
+$Server->wsStartServer('192.168.1.101', 9300);
 
 ?>
