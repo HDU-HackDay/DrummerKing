@@ -58,7 +58,13 @@ socket+鼓震动+多线程结合
 
 ![获奖照片](image/hackday-1.jpg)
 
+![获奖照片](image/hackday-2.jpg)
 
+![获奖照片](image/hackday-3.jpg)
+
+![获奖照片](image/hackday-4.jpg)
+
+![获奖照片](image/hackday-5.jpg)
 
 
 
