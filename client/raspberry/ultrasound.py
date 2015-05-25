@@ -1,3 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# @Author homeway
+# @Link http::homeway.me
+# @Version 15.04.30
 
 import sys
 import time

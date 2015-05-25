@@ -1,5 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+# @Author homeway
+# @Link http::homeway.me
+# @Github https://github.com/grasses
+# @Version 15.05.22
+
+'''
+注：本库用于3个超声波传感器同时使用，环境树莓派下安装RPi.GPIO，单个请用ultrasound.py
+'''
 import sys
 import time
 import RPi.GPIO as GPIO
